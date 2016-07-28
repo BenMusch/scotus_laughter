@@ -5,7 +5,7 @@ import scrapy
 
 class BaseSpider(scrapy.Spider):
     name = "base"
-    docket_regex = r"\d+\-\d+"
+    docket_regex = r"(\d+\-\d+(\-Question-\d)?)"
     date_regex = r"[01]\d\/[0-3]\d\/\d{2}"
     title_regex = r".+\sv\.\s.+"
 

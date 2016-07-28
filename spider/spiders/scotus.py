@@ -16,7 +16,6 @@ class ScotusSpider(BaseSpider):
     filler_characters = ["\r", "\xa0"]
 
     def parse_term(self, response):
-        #TODO cases with multiple argument sessions, e.g. Obergefell
         hxs = Selector(response)
 
         rows = hxs.xpath("//table/tr")
@@ -29,12 +28,12 @@ class ScotusSpider(BaseSpider):
             if dont_skip:
                 row_text = self._clean_text(row_text)
                 case = ScotusCaseItem()
-                case['docket_num'] = re.findall(self.docket_regex, row_text)[0]
+                case["docket_num"] = re.findall(self.docket_regex, row_text)[0][0]
                 row_text = row_text.replace(case["docket_num"] + ".", "")
-                case['title'] = re.findall(self.title_regex,
+                case["title"] = re.findall(self.title_regex,
                         row_text)[0].strip()
-                case['date'] = re.findall(self.date_regex, row_text)[0]
-                case['transcript'] = row.xpath('.//a/@href').extract()
+                case["date"] = re.findall(self.date_regex, row_text)[0]
+                case["transcript"] = row.xpath(".//a/@href").extract()
                 yield case
 
     def term_request(self):
