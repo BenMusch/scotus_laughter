@@ -15,32 +15,66 @@ speakers = [scalia,
  mckenna,
  davis]
 wash_lines = [[{'speaker': souter,
-   'laughter': False,
-   'text': "It's helpful to your case, but, going back to my question, do you know any people who go around saying, well, you know, I really prefer the Democrats; I'm a Republican myself?"},
-  {'speaker': souter,
-   'laughter': False,
-   'text': "I mean that, that doesn't happen."},
+   'laughter_index': False,
+   'lines': [
+       {
+           'text': "It's helpful to your case, but, going back to my question, do you know any people who go around saying, well, you know, I really prefer the Democrats; I'm a Republican myself?",
+           'laughter': False
+        },
+       {
+           'text': "I mean that, that doesn't happen.",
+           'laughter': False
+        },
+    ]
+   },
   {'speaker': mckenna,
-   'laughter': True,
-   'text': "--Well, the example of Senator Lieberman comes to mind, where he said I really prefer the democrats and I'm running as an independent. (Laughter.)"},
+    'lines': [
+        {
+            'text':"--Well, the example of Senator Lieberman comes to mind, where he said I really prefer the democrats and I'm running as an independent. (Laughter.)" ,
+            'laughter': True
+        }
+    ]
+    },
   {'speaker': souter,
-   'laughter': False,
-   'text': "There's always one"},
-  {'speaker': souter,
-   'laughter': False,
-   'text': "But seriously, as a systemic matter, do you really think that's... thats's a distinction that anyone would recognize?"}]]
-ocasio_lines = [[{'speaker': davis,
-   'laughter': False,
-   'text': "Justice Scalia, until 1992, I think that was an open question, but this Court decided in Evans v. United States in '92 that Hobbs Act extortion encompasses the paying of -- of bribes."},
-  {'speaker': scalia,
-   'laughter': True,
-   'text': 'I dissented, I assume. (Laughter.)'},
+    'lines': [
+        {
+            'text': "There's always one",
+            'laughter': False
+        },
+        {
+            'text': "But seriously, as a systemic matter, do you really think that's... thats's a distinction that anyone would recognize?",
+            'laughter': False
+        }
+    ]
+    }
+]]
+ocasio_lines = [[{
+    'speaker': davis,
+    'lines': [
+        {
+            'laughter': False,
+            'text': "Justice Scalia, until 1992, I think that was an open question, but this Court decided in Evans v. United States in '92 that Hobbs Act extortion encompasses the paying of -- of bribes.",
+        }]
+    },
+    {'speaker': scalia,
+    'lines': [
+        {
+            'laughter': True,
+            'text': 'I dissented, I assume. (Laughter.)',
+        }]
+    },
   {'speaker': davis,
-   'laughter': False,
-   'text': 'You did.'},
-  {'speaker': davis,
-   'laughter': False,
-   'text': "But, Your Honor, I think that that -- the decision in Evans was really the high-water mark of this Court's Hobbs Act jurisprudence. And since then the Court has been careful not to expand the Hobbs Act --"}]]
+    'lines': [{
+            'laughter': False,
+            'text': 'You did.'
+        },
+        {
+            'laughter': False,
+            'text': "But, Your Honor, I think that that -- the decision in Evans was really the high-water mark of this Court's Hobbs Act jurisprudence. And since then the Court has been careful not to expand the Hobbs Act --"
+        }
+        ]
+    }
+]]
 cases = [{'docket_num': '06-713',
   'title': 'Washington State Grange v. Washington State Republican Party',
   'date': '10/01/2007',
