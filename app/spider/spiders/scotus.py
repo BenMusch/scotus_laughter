@@ -5,8 +5,8 @@ from scrapy.spider import Spider
 from scrapy.selector import Selector
 from scrapy.http import Request
 
-from spider.spiders.base import BaseSpider
-from spider.items import ScotusCaseItem
+from app.spider.spiders.base import BaseSpider
+from app.spider.items import ScotusCaseItem
 
 
 class ScotusSpider(BaseSpider):
@@ -14,6 +14,7 @@ class ScotusSpider(BaseSpider):
     allowed_domains = ["supremecourt.gov"]
     base_url = "http://www.supremecourt.gov/"
     filler_characters = ["\r", "\xa0"]
+    date_format = '%m/%d/%y'
 
     def parse_term(self, response):
         hxs = Selector(response)
@@ -33,7 +34,9 @@ class ScotusSpider(BaseSpider):
                 case["title"] = re.findall(self.title_regex,
                         row_text)[0].strip()
                 case["date"] = re.findall(self.date_regex, row_text)[0]
-                case["transcript"] = row.xpath(".//a/@href").extract()
+                case["transcript"] = row.xpath(".//a/@href").extract()[0]
+                case["transcript"] = case["transcript"].replace("../",
+                        self.base_url + "oral_arguments/")
                 yield case
 
     def term_request(self):

@@ -22,7 +22,7 @@ class Transcript(db.Model):
     def __init__(self, url, case, question_num=1):
         self.url = url
         self.docket_num = case.docket_num
-        self.question_num = question_num
+        self.question_nutm = question_num
 
 class LineGroup(db.Model):
     id = db.Column(db.Integer, primary_key=True)
