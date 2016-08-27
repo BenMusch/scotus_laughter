@@ -9,7 +9,6 @@ drop table if exists transcripts;
 create table transcripts (
   id integer primary key autoincrement;
   url text not null;
-  format text not null;
   docket_num text not null;
   foreign key(docket_num) references cases;
 );

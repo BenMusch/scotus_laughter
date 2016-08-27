@@ -30,7 +30,7 @@ class PdfParser(object):
         self.cleaned_text = self.joined_text
         for pattern in self.REPLACEMENTS:
             self.cleaned_text = re.sub(pattern, "", self.cleaned_text)
-        self.cleaned_text = self.cleaned_text.replace(self.PAGE_BREAK, "")
+        self.cleaned_text = self.cleaned_text.replace(self.PAGE_BREAK, "").replace("  ", " ")
 
     def extract_laughter(self):
         i = 0

@@ -1,13 +1,15 @@
-# Python bytecode 2.7 (disassembled from Python 2.7)
-
-# Embedded file name: /Users/benmusch/Documents/programming-trinkets/scotus-laughter/app/app.py
-# Compiled at: 2016-07-28 15:57:44
 from flask import Flask, jsonify, abort
+from flask.ext.sqlalchemy import SQLAlchemy
+
+
 app = Flask(__name__)
+app.config.from_object('config')
+db = SQLAlchemy(app)
+
+import models
 from mocks import speakers, cases, cases_for_speaker
 from decorators import crossdomain
 
-PAGE_BREAK = "{PAGE BREAK}"
 
 @app.route('/api/cases', methods=['GET'])
 @crossdomain(origin='*')
