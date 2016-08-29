@@ -1,3 +1,5 @@
+from sqlalchemy import event
+
 from app import db
 
 class Case(db.Model):
@@ -18,11 +20,13 @@ class Transcript(db.Model):
     url = db.Column(db.String(256), unique=True)
     docket_num = db.Column(db.String(10), db.ForeignKey('case.docket_num'))
     question_num = db.Column(db.Integer, default=1)
+    processed = db.Column(db.Boolean, default=False)
 
-    def __init__(self, url, case, question_num=1):
+    def __init__(self, url, case, question_num=1, processed=False):
         self.url = url
         self.docket_num = case.docket_num
-        self.question_nutm = question_num
+        self.question_num = question_num
+        self.processd = processed
 
 class LineGroup(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -30,7 +34,6 @@ class LineGroup(db.Model):
 
     def __init__(self, transcript):
         self.transcript_id = transcript.id
-
 
 class Line(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -44,3 +47,18 @@ class Line(db.Model):
         self.speaker = speaker
         self.text = text
         self.group_id = group.id
+
+from pdf_parser import LineGenerator
+
+@event.listens_for(Transcript, 'after_insert')
+def process_transcript(mapper, connection, target):
+    '''
+    Once a Transcript is created, process the pdf file and mark the transcript
+    as processed
+    '''
+    print 'beginning process for ' + target.docket_num
+    LineGenerator(target).process()
+    target.proccessed = True
+    db.session.commit()
+    print 'finished processing' + target.docket_num
+

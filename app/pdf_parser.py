@@ -1,11 +1,18 @@
 import re
 import logging
+import time
+from urllib import urlretrieve
 
 import slate
 
-#from app.models import Line
+from models import Line, LineGroup
+from app import db
 
 class PdfParser(object):
+    '''
+    Parses a formatted transcript pdf into an array of the text for Lines with
+    laughter
+    '''
     PAGE_BREAK = "{PAGE BREAK}"
     REPLACEMENTS = [
             # various whitespace chars
@@ -24,6 +31,10 @@ class PdfParser(object):
     LAUGHTER = "(Laughter.)"
 
     def __init__(self, file_path):
+        if 'http' in file_path:
+            tmp_filename = "../" + transcript.docket_num + "-" + str(int(time.time()))
+            urlretrieve(file_path, tmp_filename)
+            file_path = tmp_filename
         with open(file_path) as f:
             self.doc = slate.PDF(f)
         self.joined_text = self.PAGE_BREAK.join(self.doc)
@@ -80,3 +91,27 @@ class PdfParser(object):
                 i += 1
         return zipped
 
+class LineGenerator(object):
+    '''
+    Takes the data from the PdfParser and interacts with the database. Given a
+    Transcript, this object will perist the relevant Lines and LineGroups to the
+    database.
+    '''
+
+    def __init__(self, transcript):
+        self.transcript = transcript
+
+    def process(self):
+        parser = PdfParser(self.transcript.url)
+        for line_group_data in parser.extract_laughter():
+            group = LineGroup(self.transcript)
+            index = 0
+            for line_data in line_group_data:
+                index += 1
+                speaker_name = line_data[0]
+                text = line_data[1]
+                has_laughter = PdfParser.LAUGHTER in text
+                line = Line(speaker_name, text, group, index, has_laughter)
+                db.session.add(line)
+            db.session.add(group)
+        db.session.commit()

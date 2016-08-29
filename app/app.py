@@ -5,6 +5,7 @@ import config
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = config.SQLALCHEMY_DATABASE_URI
+app.config['SQLALCHEMY_MIGRATE_REPO'] = config.SQLALCHEMY_MIGRATE_REPO
 db = SQLAlchemy(app)
 
 import models

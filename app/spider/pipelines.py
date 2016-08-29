@@ -20,11 +20,10 @@ class DatabasePipeline(object):
     def process_item(self, item, spider):
         if isinstance(spider, ScotusSpider):
             if 'Question' in item['docket_num']:
+                # Cases with multiple argument sessions will have the docket
+                # number field formatted as "12-345-Question-X"
                 split = item['docket_num'].split('-')
-                try:
-                    docket_num = "%s-%s" % (split[0], split[1])
-                except:
-                    import pdb; pdb.set_trace()
+                docket_num = split[0] + '-' + split[1]
                 question_num = int(split[-1])
             else:
                 docket_num = item['docket_num']
@@ -47,3 +46,4 @@ class DatabasePipeline(object):
                 db.session.add(transcript)
                 db.session.commit()
                 print 'Success! ' + item['docket_num']
+        return item
