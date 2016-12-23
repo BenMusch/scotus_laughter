@@ -30,7 +30,7 @@ class PdfParser(object):
     SPEAKER_PATTERN = "([A-Z][A-Z\s\.\\']+:)"
     LAUGHTER = "(Laughter.)"
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, transcript=None):
         if 'http' in file_path:
             tmp_filename = "../" + transcript.docket_num + "-" + str(int(time.time()))
             urlretrieve(file_path, tmp_filename)

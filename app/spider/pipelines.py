@@ -30,10 +30,11 @@ class DatabasePipeline(object):
                 question_num = 1
             case = Case.query.get(docket_num)
             if case:
-                if not Transcript.query.filter_by(docket_num=docket_num,
-                        question_num=question_num):
+                transcript = Transcript.query.filter_by(docket_num=docket_num,
+                                                        question_num=question_num)
+                if not transcript.first() and question_num == 2:
                     print "Creating case for %s..." % item['docket_num']
-                    transcript = Transcript(item['url'], case, question_num)
+                    transcript = Transcript(item['transcript'], case, question_num)
                     db.session.add(transcript)
                     db.session.commit()
                     print 'Success! ' + item['docket_num']

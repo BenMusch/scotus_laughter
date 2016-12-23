@@ -50,7 +50,7 @@ class Line(db.Model):
 
 from pdf_parser import LineGenerator
 
-@event.listens_for(Transcript, 'after_insert')
+#@event.listens_for(Transcript, 'after_insert')
 def process_transcript(mapper, connection, target):
     '''
     Once a Transcript is created, process the pdf file and mark the transcript
