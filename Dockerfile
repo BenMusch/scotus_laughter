@@ -15,7 +15,6 @@ RUN pip install --no-cache-dir -r /usr/src/app/requirements.txt
 # copy files required for the app to run
 COPY scrapy.cfg /usr/src/app/
 COPY app/ /usr/src/app/
-COPY templates/index.html /usr/src/app/templates/
 
 # tell the port number the container should expose
 EXPOSE 5000

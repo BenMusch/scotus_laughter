@@ -11,6 +11,7 @@ db = SQLAlchemy(app)
 import models
 from mocks import speakers, cases, cases_for_speaker
 from decorators import crossdomain
+from pdf_parser import PdfParser
 
 
 @app.route('/api/cases', methods=['GET'])
