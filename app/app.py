@@ -6,13 +6,12 @@ import config
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = config.SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_MIGRATE_REPO'] = config.SQLALCHEMY_MIGRATE_REPO
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = config.SQLALCHEMY_TRACK_MODIFICATIONS
 db = SQLAlchemy(app)
 
 import models
 from mocks import speakers, cases, cases_for_speaker
 from decorators import crossdomain
-from pdf_parser import PdfParser
-
 
 @app.route('/api/cases', methods=['GET'])
 @crossdomain(origin='*')
@@ -52,4 +51,5 @@ def get_cases_by_speaker(speaker_id):
 
 
 if __name__ == '__main__':
+    print "HELLLOOO"
     app.run(debug=True)

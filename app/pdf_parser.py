@@ -41,7 +41,35 @@ class PdfParser(object):
         self.cleaned_text = self.joined_text
         for pattern in self.REPLACEMENTS:
             self.cleaned_text = re.sub(pattern, "", self.cleaned_text)
-        self.cleaned_text = self.cleaned_text.replace(self.PAGE_BREAK, "").replace("  ", " ")
+        self.cleaned_text = self.cleaned_text.replace("  ", " ")
+
+        # removes line numbers when integrated into the text
+        # TODO make this process not super costly
+        reconstructed = []
+        page_num = 1
+        pages = self.cleaned_text.split(self.PAGE_BREAK)
+        for page in pages:
+            # limits the number of pages to remove line numbers from, otherwise
+            # this freezes on my dev machine
+            prev_page = pages[page_num - 2]
+            next_page = pages[page_num] if page_num < len(pages) else ""
+            if self.LAUGHTER in (prev_page + page + next_page):
+                line_nums = [str(i) for i in range(2, 26)]
+                words = page.split()
+                if self._has_line_nums(page, [str(page_num)] + line_nums):
+                    no_lines = self._remove_line_nums(words, [str(page_num)] + line_nums)
+                    reconstructed += [no_lines]
+                elif self._has_line_nums(page, ["1"] + line_nums):
+                    no_lines = self._remove_line_nums(words, ["1"] + line_nums)
+                    reconstructed += [no_lines]
+                else:
+                    reconstructed += [page]
+            else:
+                reconstructed += [page]
+            page_num += 1
+
+        self.cleaned_text = (" " + self.PAGE_BREAK).join(reconstructed)
+        self.cleaned_text = self.cleaned_text.replace(self.PAGE_BREAK, "")
 
     def extract_laughter(self):
         i = 0
@@ -68,6 +96,18 @@ class PdfParser(object):
                 laughter_groups.append(laughter_group)
         return laughter_groups
 
+    def _has_line_nums(self, text, nums):
+        pattern = ".*%s.*" % ".*".join(nums)
+        return re.match(pattern, text)
+
+    def _remove_line_nums(self, words, nums):
+        i = 0
+        while (words and nums) and i < len(words):
+            if words[i] == nums[0]:
+                words = words[:i] + words[(i+1):]
+                nums = nums[1:]
+            i += 1
+        return " ".join(words)
 
     def _zipped_lines(self):
         lines = re.split(self.SPEAKER_PATTERN, self.cleaned_text)
@@ -102,9 +142,11 @@ class LineGenerator(object):
         self.transcript = transcript
 
     def process(self):
-        parser = PdfParser(self.transcript.url)
+        parser = PdfParser(self.transcript.url, self.transcript)
         for line_group_data in parser.extract_laughter():
             group = LineGroup(self.transcript)
+            db.session.add(group)
+            db.session.commit() # stops each line's group_id from being None
             index = 0
             for line_data in line_group_data:
                 index += 1
@@ -113,5 +155,6 @@ class LineGenerator(object):
                 has_laughter = PdfParser.LAUGHTER in text
                 line = Line(speaker_name, text, group, index, has_laughter)
                 db.session.add(line)
-            db.session.add(group)
+        self.transcript.processed = True
+        db.session.add(self.transcript)
         db.session.commit()

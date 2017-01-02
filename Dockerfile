@@ -16,8 +16,12 @@ RUN pip install --no-cache-dir -r /usr/src/app/requirements.txt
 COPY scrapy.cfg /usr/src/app/
 COPY app/ /usr/src/app/
 
+# migrate the db
+RUN chmod +x ./usr/src/app/scripts/migrate.sh
+RUN ./usr/src/app/scripts/migrate.sh
+
 # tell the port number the container should expose
 EXPOSE 5000
 
 # run the application
-CMD ["python", "/usr/src/app/app.py"]
+CMD ["python", "/usr/src/app/test.py"]

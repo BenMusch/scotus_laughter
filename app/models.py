@@ -18,7 +18,7 @@ class Case(db.Model):
 class Transcript(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(256), unique=True)
-    docket_num = db.Column(db.String(10), db.ForeignKey('case.docket_num'))
+    docket_num = db.Column(db.String(10), db.ForeignKey(Case.docket_num))
     question_num = db.Column(db.Integer, default=1)
     processed = db.Column(db.Boolean, default=False)
 
@@ -30,7 +30,7 @@ class Transcript(db.Model):
 
 class LineGroup(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    transcript_id = db.Column(db.Integer, db.ForeignKey('transcript.id'))
+    transcript_id = db.Column(db.Integer, db.ForeignKey(Transcript.id))
 
     def __init__(self, transcript):
         self.transcript_id = transcript.id
@@ -41,24 +41,23 @@ class Line(db.Model):
     text = db.Column(db.String)
     has_laughter = db.Column(db.Boolean)
     group_index = db.Column(db.Integer)
-    group_id = db.column(db.Integer, db.ForeignKey('line_group.id'))
+    group_id = db.Column(db.Integer, db.ForeignKey(LineGroup.id))
 
     def __init__(self, speaker, text, group, group_index, has_laughter):
         self.speaker = speaker
         self.text = text
         self.group_id = group.id
 
-from pdf_parser import LineGenerator
+#from pdf_parser import LineGenerator
 
 #@event.listens_for(Transcript, 'after_insert')
-def process_transcript(mapper, connection, target):
-    '''
-    Once a Transcript is created, process the pdf file and mark the transcript
-    as processed
+#def process_transcript(mapper, connection, target):
+#    '''
+#    Once a Transcript is created, process the pdf file and mark the transcript
+#    as processed
     '''
     print 'beginning process for ' + target.docket_num
     LineGenerator(target).process()
-    target.proccessed = True
     db.session.commit()
     print 'finished processing' + target.docket_num
-
+    '''
